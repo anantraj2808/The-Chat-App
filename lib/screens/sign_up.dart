@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:the_chat_app/helper/helper_methods.dart';
 import 'package:the_chat_app/screens/chat_room.dart';
 import 'package:the_chat_app/services/auth.dart';
 import 'package:the_chat_app/services/database.dart';
@@ -22,6 +23,7 @@ class _SignUpState extends State<SignUp> {
   TextEditingController emailTEC = TextEditingController();
   TextEditingController passwordTEC = TextEditingController();
   AuthMethods _authMethods = AuthMethods();
+  HelperMethods _helperMethods = HelperMethods();
 
   void signUp(){
     if (_formKey.currentState.validate()){
@@ -30,7 +32,9 @@ class _SignUpState extends State<SignUp> {
         "fullName" : fullNameTEC.text,
         "email" : emailTEC.text
       };
-
+      _helperMethods.setEmailSP(emailTEC.text);
+      _helperMethods.setFullNameSP(fullNameTEC.text);
+      _helperMethods.setUserLoggedInStatusSP(true);
       setState(() {
         isLoading = true;
       });

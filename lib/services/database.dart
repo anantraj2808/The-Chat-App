@@ -11,4 +11,16 @@ class DatabaseMethods{
       "fullName" , isEqualTo: fullName
     ).get();
   }
+
+  getUserByEmail(String email) async{
+    return await FirebaseFirestore.instance.collection("Users").where(
+        "email" , isEqualTo: email
+    ).get();
+  }
+
+  createChatRoom(String chatRoomId,chatRoomMap){
+    FirebaseFirestore.instance.collection("ChatRoom").doc(chatRoomId).set(chatRoomMap).catchError((e){
+      print(e.toString());
+    });
+  }
 }

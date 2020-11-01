@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:the_chat_app/helper/authenticate.dart';
+import 'package:the_chat_app/helper/constants.dart';
+import 'package:the_chat_app/helper/helper_methods.dart';
 import 'package:the_chat_app/screens/search.dart';
 
 class ChatRoom extends StatefulWidget {
@@ -9,6 +11,20 @@ class ChatRoom extends StatefulWidget {
 }
 
 class _ChatRoomState extends State<ChatRoom> {
+
+  HelperMethods _helperMethods = HelperMethods();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getUserInfo();
+  }
+
+  getUserInfo() async {
+    Constants.myName = await _helperMethods.getFullNameSP();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

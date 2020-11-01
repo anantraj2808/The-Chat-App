@@ -1,7 +1,13 @@
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:the_chat_app/helper/helper_methods.dart';
 import 'package:the_chat_app/services/auth.dart';
+import 'package:the_chat_app/services/database.dart';
 import 'package:the_chat_app/widgets/widgets.dart';
+
+import 'chat_room.dart';
 
 class SignIn extends StatefulWidget {
 
@@ -17,10 +23,36 @@ class _SignInState extends State<SignIn> {
   final _formKey = GlobalKey<FormState>();
   TextEditingController emailTEC = TextEditingController();
   TextEditingController passwordTEC = TextEditingController();
+  bool isLoading = false;
+  QuerySnapshot snapshotUserInfo;
+  DatabaseMethods _databaseMethods = DatabaseMethods();
+  HelperMethods _helperMethods = HelperMethods();
+  AuthMethods _authMethods = AuthMethods();
 
   AuthMethods authMethods = AuthMethods();
   signIn(){
     if (_formKey.currentState.validate()){
+      setState(() {
+        isLoading = true;
+      });
+
+      _helperMethods.setEmailSP(emailTEC.text);
+      _databaseMethods.getUserByEmail(emailTEC.text).then((val){
+        if (val != null){
+          snapshotUserInfo = val;
+          _helperMethods.setFullNameSP(snapshotUserInfo.docs[0].data()['fullName']);
+        }
+      });
+
+      _authMethods.signInWithEmailAndPassword(emailTEC.text, passwordTEC.text).then((val){
+        if (val != null){
+          _helperMethods.setUserLoggedInStatusSP(true);
+          Navigator.pushReplacement(context, MaterialPageRoute(
+              builder: (context) => ChatRoom()
+          ));
+        }
+      });
+
     }
   }
 
@@ -73,6 +105,9 @@ class _SignInState extends State<SignIn> {
                 ),
                 SizedBox(height: 30.0,),
                 GestureDetector(
+                  onTap: (){
+                    signIn();
+                  },
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(30.0),
