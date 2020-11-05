@@ -47,7 +47,7 @@ class _MyAppState extends State<MyApp> {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: isUserLoggedIn != null ? isUserLoggedIn ? ChatRoom() : Authenticate
+      home: isUserLoggedIn != null ? isUserLoggedIn ? ChatRoom() : Authenticate()
           :
           Container(
             child: Center(

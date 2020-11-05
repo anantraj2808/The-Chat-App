@@ -24,6 +24,7 @@ class _SignUpState extends State<SignUp> {
   TextEditingController passwordTEC = TextEditingController();
   AuthMethods _authMethods = AuthMethods();
   HelperMethods _helperMethods = HelperMethods();
+  DatabaseMethods _databaseMethods = DatabaseMethods();
 
   void signUp(){
     if (_formKey.currentState.validate()){
@@ -50,6 +51,28 @@ class _SignUpState extends State<SignUp> {
     }
   }
 
+  signUpWithGoogle(BuildContext context){
+    _authMethods.signInWithGoogle(context).then((val){
+      try{
+        if (val != null){
+          _helperMethods.setFullNameSP(val.displayName);
+          _helperMethods.setEmailSP(val.email);
+          Map<String,String> userInfoMap = {
+            "fullName" : val.displayName,
+            "email" : val.email
+          };
+          _databaseMethods.uploadData(userInfoMap);
+          Navigator.push(context, MaterialPageRoute(
+              builder: (context) => ChatRoom()
+          ));
+          _helperMethods.setUserLoggedInStatusSP(true);
+        }
+      } catch (e) {
+        print("Anant_______________"+e.toString());
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,106 +82,108 @@ class _SignUpState extends State<SignUp> {
           width: MediaQuery.of(context).size.width,
           alignment: Alignment.bottomCenter,
           padding: EdgeInsets.symmetric(horizontal: 24.0),
-          child: Container(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Form(
-                  key: _formKey,
-                  child: Column(
+          child: SingleChildScrollView(
+            child: Container(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Form(
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        TextFormField(
+                          validator: (value){
+                            if (value.isEmpty || value.length<4){
+                              return "Enter a valid Username";
+                            }
+                            else
+                              return null;
+                          },
+                          controller: fullNameTEC,
+                          style: TextStyle(color: Colors.white),
+                          decoration: textFieldInputDecoration("Full name (People will search you by this)"),
+                        ),
+                        SizedBox(height: 16.0,),
+                        TextFormField(
+                          validator: (value){
+                            return RegExp(
+                                r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                .hasMatch(value)
+                                ? null
+                                : "Please enter valid Email ID";
+                          },
+                          controller: emailTEC,
+                          style: TextStyle(color: Colors.white),
+                          decoration: textFieldInputDecoration("Email ID"),
+                        ),
+                        SizedBox(height: 16.0,),
+                        TextFormField(
+                          obscureText: true,
+                          validator: (value){
+                            if (value.isEmpty || value.length<4){
+                              return "Password too weak";
+                            }
+                            else
+                              return null;
+                          },
+                          controller: passwordTEC,
+                          style: TextStyle(color: Colors.white),
+                          decoration: textFieldInputDecoration("Password"),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 30.0,),
+                  GestureDetector(
+                    onTap: (){
+                      signUp();
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(30.0),
+                          gradient: LinearGradient(
+                            colors: [
+                              const Color(0xff007EF4),
+                              const Color(0xff2A75BC)
+                            ],
+                          )
+                      ),
+                      width: MediaQuery.of(context).size.width,
+                      padding: EdgeInsets.symmetric(vertical: 16),
+                      child: Text("Sign Up",style: TextStyle(color: Colors.white,fontSize: 17.0),textAlign: TextAlign.center,),
+                    ),
+                  ),
+                  SizedBox(height: 20.0,),
+                  GestureDetector(
+                    child: Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(30.0),
+                          color: Colors.white
+                      ),
+                      width: MediaQuery.of(context).size.width,
+                      padding: EdgeInsets.symmetric(vertical: 16),
+                      child: Text("Sign Up with Google",style: TextStyle(color: Colors.black,fontSize: 17.0),textAlign: TextAlign.center,),
+                    ),
+                    onTap: (){
+                      signUpWithGoogle(context);
+                    },
+                  ),
+                  SizedBox (height: 30.0,),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      TextFormField(
-                        validator: (value){
-                          if (value.isEmpty || value.length<4){
-                            return "Enter a valid Username";
-                          }
-                          else
-                            return null;
+                      Text("Already have an account? ",style: TextStyle(color: Colors.white,fontSize: 16.0),),
+                      GestureDetector(
+                          child: Text("Sign In",style: TextStyle(color: Colors.white,fontSize: 16.0,decoration: TextDecoration.underline),),
+                        onTap: (){
+                          widget.toggleView();
                         },
-                        controller: fullNameTEC,
-                        style: TextStyle(color: Colors.white),
-                        decoration: textFieldInputDecoration("Full name"),
-                      ),
-                      SizedBox(height: 16.0,),
-                      TextFormField(
-                        validator: (value){
-                          return RegExp(
-                              r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                              .hasMatch(value)
-                              ? null
-                              : "Please enter valid Email ID";
-                        },
-                        controller: emailTEC,
-                        style: TextStyle(color: Colors.white),
-                        decoration: textFieldInputDecoration("Email ID"),
-                      ),
-                      SizedBox(height: 16.0,),
-                      TextFormField(
-                        obscureText: true,
-                        validator: (value){
-                          if (value.isEmpty || value.length<4){
-                            return "Password too weak";
-                          }
-                          else
-                            return null;
-                        },
-                        controller: passwordTEC,
-                        style: TextStyle(color: Colors.white),
-                        decoration: textFieldInputDecoration("Password"),
                       ),
                     ],
                   ),
-                ),
-                SizedBox(height: 30.0,),
-                GestureDetector(
-                  onTap: (){
-                    signUp();
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(30.0),
-                        gradient: LinearGradient(
-                          colors: [
-                            const Color(0xff007EF4),
-                            const Color(0xff2A75BC)
-                          ],
-                        )
-                    ),
-                    width: MediaQuery.of(context).size.width,
-                    padding: EdgeInsets.symmetric(vertical: 16),
-                    child: Text("Sign Up",style: TextStyle(color: Colors.white,fontSize: 17.0),textAlign: TextAlign.center,),
-                  ),
-                ),
-                SizedBox(height: 20.0,),
-                GestureDetector(
-                  child: Container(
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(30.0),
-                        color: Colors.white
-                    ),
-                    width: MediaQuery.of(context).size.width,
-                    padding: EdgeInsets.symmetric(vertical: 16),
-                    child: Text("Sign Up with Google",style: TextStyle(color: Colors.black,fontSize: 17.0),textAlign: TextAlign.center,),
-                  ),
-                  onTap: (){
-                    //TODO
-                  },
-                ),
-                SizedBox (height: 30.0,),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text("Already have an account? ",style: TextStyle(color: Colors.white,fontSize: 16.0),),
-                    GestureDetector(
-                        child: Text("Sign In",style: TextStyle(color: Colors.white,fontSize: 16.0,decoration: TextDecoration.underline),),
-                      onTap: (){
-                          //TODO
-                      },
-                    ),
-                  ],
-                ),
-                SizedBox(height: 110.0,)
-              ],
+                  SizedBox(height: 110.0,)
+                ],
+              ),
             ),
           ),
         ),

@@ -35,10 +35,10 @@ class _SearchState extends State<Search> {
       "chatroomid" : chatRoomId
     };
     databaseMethods.createChatRoom(chatRoomId,chatRoomMap);
-    //print("My Name______________${Constants.myName}");
-    //print("Your Name____________$fullName");
+//    print("My Name______________${Constants.myName}");
+//    print("Your Name____________$fullName");
     Navigator.pushReplacement(context, MaterialPageRoute(
-      builder: (context) => ConvoScreen()
+      builder: (context) => ConvoScreen(fullName,chatRoomId)
     ));
   }
 
@@ -63,11 +63,10 @@ class _SearchState extends State<Search> {
                       borderRadius: BorderRadius.circular(24.0)
                   ),
                   child: TextFormField(
-                    keyboardType: TextInputType.name,
                     onChanged: (String text){
-
                     },
                     controller: _searchController,
+                    textCapitalization: TextCapitalization.words,
                     decoration: InputDecoration(
                         hintText: "Search for a person",
                         contentPadding: const EdgeInsets.only(left: 24.0),
@@ -87,7 +86,9 @@ class _SearchState extends State<Search> {
         ),
       ),
       body: Container(
-        child: querySnapshot != null ? ListView.builder(
+        child: _searchController.text.isNotEmpty && querySnapshot == null ? Container(child: Center(
+          child: CircularProgressIndicator(),
+        ),) : querySnapshot != null ? ListView.builder(
           shrinkWrap: true,
           itemCount: querySnapshot.docs.length,
           itemBuilder: (context,index){
@@ -105,7 +106,12 @@ class _SearchState extends State<Search> {
                   ),
                   GestureDetector(
                     onTap: (){
-                      createChatRoomAndStartConversation(querySnapshot.docs[index].data()["fullName"]);
+                      if (querySnapshot.docs[index].data()["fullName"] == Constants.myName){
+                        Scaffold.of(context).showSnackBar(SnackBar(content: Text("Soliloquy is important but we don't do that here!"),));
+                      }
+                      else{
+                        createChatRoomAndStartConversation(querySnapshot.docs[index].data()["fullName"]);
+                      }
                     },
                     child: Container(
                       padding: EdgeInsets.symmetric(horizontal: 16.0,vertical: 12.0),

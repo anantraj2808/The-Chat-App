@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "625042341213-46f3hrp7an5msfbfv3lftn8441b3hvog.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.anantraj.the_chat_app",
+            "certificate_hash": "09eb93c8aed46e7cf3f63f31433bcc7b5c48c022"
+          }
+        },
+        {
           "client_id": "625042341213-q1dffq4958i7oh2d8rvjtp2bp9cth6uh.apps.googleusercontent.com",
           "client_type": 3
         }
