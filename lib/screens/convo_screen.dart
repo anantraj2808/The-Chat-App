@@ -79,57 +79,64 @@ class _ConvoScreenState extends State<ConvoScreen> {
 //          ),
 //        ),
       ),
-      body: Container(
-        child: Stack(
-          children: [
-            chatMessageList(),
-            Container(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-                  color: Color(0x54FFFFFF),
-                  child: Row(
-                    children: [
-                      Expanded(
-                          child: TextField(
-                            style: TextStyle(color: Colors.white,fontSize: 18.0),
-                            controller: messageEditingController,
-                            textCapitalization: TextCapitalization.sentences,
-                            decoration: InputDecoration(
-                                hintText: "Message ${widget.talkingTo} ...",
-                                hintStyle: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                ),
-                                border: InputBorder.none
-                            ),
-                          )),
-                      SizedBox(width: 16,),
-                      GestureDetector(
-                        onTap: () {
-                          sendMessage();
-                        },
-                        child: Container(
-                            height: 40,
-                            width: 40,
-                            decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                    colors: [
-                                      const Color(0x36FFFFFF),
-                                      const Color(0x0FFFFFFF)
-                                    ],
-                                    begin: FractionalOffset.topLeft,
-                                    end: FractionalOffset.bottomRight
-                                ),
-                                borderRadius: BorderRadius.circular(40)
-                            ),
-                            child: Center(child: Icon(Icons.send,color: Colors.white,size: 25.0,))),
-                      ),
-                    ],
-                  )
+      body: SingleChildScrollView(
+        child: Container(
+          child: Column(
+            children: [
+              SingleChildScrollView(
+                child: Container(
+                  height: MediaQuery.of(context).size.height-190.0,
+                    child: chatMessageList()),
               ),
-            )
-          ],
+              Container(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                    height: 100.0,
+                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+                    color: Colors.grey,
+                    child: Row(
+                      children: [
+                        Expanded(
+                            child: TextField(
+                              style: TextStyle(color: Colors.white,fontSize: 18.0),
+                              controller: messageEditingController,
+                              textCapitalization: TextCapitalization.sentences,
+                              decoration: InputDecoration(
+                                  hintText: "Message ${widget.talkingTo} ...",
+                                  hintStyle: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                  ),
+                                  border: InputBorder.none
+                              ),
+                            )),
+                        SizedBox(width: 16,),
+                        GestureDetector(
+                          onTap: () {
+                            sendMessage();
+                          },
+                          child: Container(
+                              height: 40,
+                              width: 40,
+                              decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                      colors: [
+                                        const Color(0x36FFFFFF),
+                                        const Color(0x0FFFFFFF)
+                                      ],
+                                      begin: FractionalOffset.topLeft,
+                                      end: FractionalOffset.bottomRight
+                                  ),
+                                  borderRadius: BorderRadius.circular(40)
+                              ),
+                              child: Center(child: Icon(Icons.send,color: Colors.white,size: 25.0,))),
+                        ),
+                      ],
+                    )
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
